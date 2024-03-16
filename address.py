@@ -82,7 +82,7 @@ with open(csv_file, mode='w', newline='') as file:
         # time.sleep(1)
 
         # Break the loop after generating 10 addresses
-        if counter >= 1000:
+        if counter >= 10:
             break
 
 
