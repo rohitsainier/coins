@@ -1,3 +1,1 @@
-ecdsa
-base58
 requests
