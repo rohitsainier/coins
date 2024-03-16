@@ -1,1 +1,5 @@
 ecdsa
+base58
+binascii
+hashlib
+requests
