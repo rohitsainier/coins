@@ -2,6 +2,7 @@ import hashlib
 import requests
 import csv
 import os
+from ripemd import ripemd160 as md160
 
 
 def sha256(data):
@@ -11,7 +12,7 @@ def sha256(data):
 
 
 def ripemd160(x):
-    d = hashlib.new("ripemd160")
+    d = md160.new()
     d.update(x)
     return d.digest()
 
@@ -99,6 +100,7 @@ def getWif(privkey):
 
 
 def get_btc_balance(address):
+    # multiple address balance : https://blockchain.info/multiaddr?active=
     api_url = f"https://blockchain.info/balance?active={address}"
 
     try:
