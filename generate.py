@@ -1,8 +1,5 @@
-import hashlib
-import requests
-import csv
-import os
 from ripemd import ripemd160 as md160
+import hashlib
 
 
 def sha256(data):
@@ -97,69 +94,3 @@ def getWif(privkey):
     wif = b"\x80" + privkey
     wif = b58(wif + sha256(sha256(wif))[:4])
     return wif
-
-
-def get_btc_balance(address):
-    # multiple address balance : https://blockchain.info/multiaddr?active=
-    api_url = f"https://blockchain.info/balance?active={address}"
-
-    try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            data = response.json()
-            balance = data[address]["final_balance"]
-            return balance
-        else:
-            print("Error:", response.status_code)
-            return None
-    except Exception as e:
-        print("Error occurred:", e)
-        return None
-
-
-# Initialize counter
-counter = 0
-
-# CSV file header
-fields = ["Bitcoin Address",
-          "Private Key (hex)", "Balance (BTC)"]
-
-# CSV file name
-csv_file = "bitcoin_addresses.csv"
-
-# Infinite loop to generate and save Bitcoin addresses
-with open(csv_file, mode='w', newline='') as file:
-    writer = csv.writer(file)
-    # writer.writerow(fields)  # Write header row
-
-    while True:
-        randomBytes = os.urandom(32)
-        private_key_hex = getWif(randomBytes)
-        addr_str = getPublicKey(randomBytes)
-
-        # Increment the counter
-        counter += 1
-
-        # Check the balance of the address
-        balance = get_btc_balance(addr_str)
-        # print private_key_hex, public_key_hex, addr_str
-        print(f"Bitcoin Address {counter}:", addr_str, "Balance:", balance,
-              "Private Key:", private_key_hex)
-        # If the balance is non-zero, save the address to the CSV file
-        if balance is not None and float(balance) > 0:
-            print(f"Bitcoin Address {counter}:", addr_str, "Balance:", balance)
-
-            # Write to CSV file
-            row = [addr_str, private_key_hex, balance]
-            writer.writerow(row)
-
-        # Break the loop after generating 10 addresses
-        if counter >= 10:
-            break
-
-
-# Check if CSV file is empty
-if os.stat(csv_file).st_size == 0:
-    print("CSV file is empty after processing all addresses.")
-else:
-    print("CSV file is not empty. It contains the generated addresses and their balances.")
