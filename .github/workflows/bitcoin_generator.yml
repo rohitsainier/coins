@@ -24,4 +24,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Bitcoin address generator
-        run: python address.py # Replace with the path to your Python script
+        run: python balance.py
